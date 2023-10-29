@@ -4,9 +4,10 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  root: path.join(__dirname, "public"),
-  plugins: [vue()],
+  root: "./",
   build: {
-    outDir: '../dist'
-  }
+    outDir: './dist'
+  },
+
+  plugins: [vue()],
 })
