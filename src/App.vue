@@ -1,8 +1,8 @@
 <script setup>
+import TheHeader from "./components/TheHeader.vue"
+
 </script>
 
 <template>
-  <h1>
-    Hello o/
-  </h1>
+  <TheHeader />
 </template>

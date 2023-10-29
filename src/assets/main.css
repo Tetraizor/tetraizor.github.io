@@ -1,4 +1,13 @@
 * {
   box-sizing: border-box;
-  font-family: 'Noto Sans', sans;
+  font-family: 'Noto Sans';
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
