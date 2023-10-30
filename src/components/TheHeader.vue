@@ -1,8 +1,38 @@
+<script>
+export default {
+  data() {
+    return {
+      isHoveringOver: false,
+    }
+  },
+  methods: {
+    mouseMove(event) {
+      const x = event.clientX;
+      const y = event.clientY;
+    },
+    hoverChange(state) {
+      this.isHoveringOver = state;
+    }
+  }
+}
+</script>
+
 <template>
-  <div class="header">
+  <div
+    class="header"
+    :class="{ zoomedIn: isHoveringOver, zoomedOut: !isHoveringOver }"
+    @mouseover="hoverChange(true)"
+    @mouseleave="hoverChange(false)"
+    @mousemove="mouseMove"
+  >
     <div class="content">
-      <h2>Hi, I'm</h2>
-      <h1>Umuthan Özel*</h1>
+      <div
+        class="blur-on-hover-initial"
+        :class="{ blurOnHover: isHoveringOver }"
+      >
+        <h2>Hi, I'm</h2>
+        <h1>Umuthan Özel*</h1>
+      </div>
       <div class="line"></div>
     </div>
     <div class="dashed-line">
@@ -27,10 +57,10 @@
 
   user-select: none;
 
-  background-color: #d6d8dd;
+  background-color: $header-background;
   background-image: url("../img/pattern.png");
-  background-size: 700px;
   background-position: 0px 0px;
+  background-size: 700px;
 
   display: flex;
   flex-direction: column;
@@ -42,14 +72,18 @@
   animation-iteration-count: infinite;
   animation-timing-function: linear;
 
+  transition: background-size .5s;
+
   .dashed-line {
     position: absolute;
 
     border: none;
-    border-top: 4px dashed #333450;
+    border-top: 4px dashed;
 
     height: 4px;
     width: 100%;
+
+    border-color: $text-primary;
   }
 
   .content {
@@ -77,7 +111,7 @@
         margin-bottom: 0px;
       }
 
-      color: #5d5e7c;
+      color: $text-secondary;
     }
 
     h1 {
@@ -93,14 +127,27 @@
         margin-bottom: 32px;
       }
 
-      color: #333450;
+      color: $text-primary;
     }
 
     .line {
       height: 4px;
       width: 100%;
-      background-color: #333450;
+      background-color: $text-primary;
     }
   }
+}
+
+.zoomedIn {
+  background-size: 750px;
+}
+
+.blur-on-hover-initial {
+  transform: scale(1);
+  transition: transform .5s;
+}
+
+.blurOnHover {
+  transform: scale(1.04) translate(18px, -4px);
 }
 </style>
