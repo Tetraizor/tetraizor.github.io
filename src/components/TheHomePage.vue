@@ -18,6 +18,7 @@
             things</a> from time to time.
         </p>
       </article>
+
       <article>
         <h1>
           *Past...
@@ -69,15 +70,29 @@
 
   @media screen and (max-width: 650px) {
 
+    padding: 0 32px 0 32px;
+
     article {
-      padding: 32px 24px 0 24px;
+      padding: 32px 0 0 0;
+    }
+
+    .slider {
+      width: 100%;
+      padding: 0 0 0 0;
     }
   }
 
   @media screen and not (max-width: 650px) {
 
+    padding: 0 64px 0 64px;
+
     article {
-      padding: 48px 64px 0 64px;
+      padding: 48px 0 0 0;
+    }
+
+    .slider {
+      width: 100%;
+      padding: 0 0 0 0;
     }
   }
 
