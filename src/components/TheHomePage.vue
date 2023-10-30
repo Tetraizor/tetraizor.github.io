@@ -3,19 +3,27 @@
 </script>
 
 <template>
-  <div class="content">
-    <h1>
-      *Me
-    </h1>
-    <p>
-      University student and a part time full-stack developer.
-      Love to create things. Games are my passion, especially creating them. I also love everything UI/UX related, given
-      not being very good at it.
-    </p>
+  <div class="home-page">
+    <div class="content">
+      <h1>
+        *Me
+      </h1>
+      <p>
+        University student and a part time full-stack developer.
+        Love to create things. Games are my passion, especially creating them. I also love everything UI/UX related, given
+        not being very good at it.
+      </p>
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
+.home-page {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row;
+}
+
 .content {
   width: 100%;
   max-width: 1500px;
