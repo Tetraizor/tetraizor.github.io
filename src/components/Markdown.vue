@@ -1,5 +1,9 @@
 <template>
-  <div class="md-body" v-html="compiledMarkdown" :style="styleOverride"></div>
+  <div
+    class="md-body"
+    v-html="compiledMarkdown"
+    :style="styleOverride"
+  ></div>
 </template>
 
 <script>
@@ -31,7 +35,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "@/../styles/_defaults.scss";
+@import "/styles/_defaults.scss";
 
 .md-body {
   font-family: sans-serif !important;
@@ -74,6 +78,7 @@ export default {
   li {
     font-size: $font-p-large;
     line-height: $font-p-large * 1.8;
+
     @include respond-to(mobile) {
       font-size: $font-p-small;
       line-height: $font-p-small * 1.8;
