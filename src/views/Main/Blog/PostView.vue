@@ -47,10 +47,10 @@ import {
 import { useNavigationStore } from "@/stores/navigationStore";
 import { useScreenStore } from "@/stores/screenStore";
 import Markdown from "@/components/Markdown.vue";
-import Post from "@/models/Post";
 import axios from "axios";
 import LoadingPanel from "@/components/LoadingPanel.vue";
 import API_CONFIG from "@/config/apiConfig";
+import { PostType } from "portfolio-types";
 
 export default {
   name: "PostView",
@@ -62,7 +62,7 @@ export default {
 
   data() {
     return {
-      post: null as Post | null,
+      post: null as PostType | null,
 
       loading: false,
 

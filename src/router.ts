@@ -26,6 +26,9 @@ import FutureView from "./views/Main/Me/FutureView.vue";
 import PostView from "./views/Main/Blog/PostView.vue";
 import DefaultPostView from "./views/Main/Blog/DefaultPostView.vue";
 
+// "GameView" Children
+import GamesDbView from "./views/Main/Games/GamesDbView.vue";
+
 // Default routes to be used when the page is suitable for public viewing.
 const defaultRoutes = [
   {
@@ -75,6 +78,14 @@ const defaultRoutes = [
       {
         path: "/games",
         component: GamesView,
+        children: [
+          {
+            path: "db",
+            name: "db",
+            component: GamesDbView,
+            props: true,
+          },
+        ],
       },
       {
         path: "/projects",
