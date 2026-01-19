@@ -7,16 +7,21 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@import "/styles/index.scss";`,
+        additionalData: `
+          @use "${path.join(process.cwd(), "styles/_variables.scss")}" as *;
+          @use "${path.join(process.cwd(), "styles/_mixins.scss")}" as *;
+          @use "${path.join(process.cwd(), "styles/_global.scss")}" as *;
+        `,
       },
     },
   },
-  envPrefix: "PUBLIC_",
   resolve: {
     alias: {
-      "@": "/src",
+      "@": path.resolve(__dirname, "./src"),
+      styles: path.resolve(__dirname, "./styles"),
     },
   },
+  envPrefix: "PUBLIC_",
   server: {
     port: 3002,
     strictPort: true,

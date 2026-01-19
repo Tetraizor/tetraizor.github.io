@@ -1,4 +1,6 @@
-@import "./_variables.scss";
+@use "variables" as *;
+@use "mixins" as *;
+@use "global" as *;
 
 * {
   font-family: "JetBrains Mono", mono, "Roboto", sans-serif;
@@ -94,7 +96,9 @@ a {
   color: $accent;
   text-decoration: none;
   font-weight: bold;
-  transition: color 0.2s, background-color 0.2s;
+  transition:
+    color 0.2s,
+    background-color 0.2s;
 
   background-color: transparent;
 
