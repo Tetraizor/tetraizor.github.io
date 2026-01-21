@@ -121,6 +121,142 @@ a {
   }
 }
 
+button {
+  background-color: $background-secondary;
+  outline: 2px solid $outline;
+
+  border: none;
+
+  color: $text-primary;
+
+  padding: 0.5rem 0.6rem;
+  font-size: $font-p-small;
+  line-height: $font-p-small * 1.2;
+
+  white-space: nowrap;
+
+  @media screen and (min-width: $tablet) {
+    padding: 0.6rem 0.8rem;
+    font-size: $font-p-large;
+    line-height: $font-p-large * 1.2;
+  }
+
+  cursor: pointer;
+
+  transition: background-color 0.1s ease-in;
+
+  &:hover {
+    background-color: $background-tertiary;
+  }
+}
+
+input {
+  width: 100%;
+  background-color: $input-background;
+
+  border: none;
+
+  padding: 0.5rem 0.6rem;
+  font-size: $font-p-small;
+  line-height: $font-p-small * 1.2;
+
+  @media screen and (min-width: $tablet) {
+    padding: 0.6rem 0.8rem;
+    font-size: $font-p-large;
+    line-height: $font-p-large * 1.2;
+  }
+
+  outline-width: 1px;
+  outline-style: solid;
+  outline-color: transparent;
+
+  transition: outline-color 0.1s;
+
+  color: $text-primary;
+
+  &:focus {
+    outline-color: $accent;
+  }
+
+  &::placeholder {
+    color: $text-disabled;
+    font-style: italic;
+  }
+
+  &:focus::placeholder {
+    color: $text-disabled;
+    font-style: italic;
+  }
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  background-color: $background-primary;
+
+  outline: 2px solid $outline;
+  border: none;
+
+  color: $text-primary;
+
+  padding: 0.5rem 0.6rem;
+  font-size: $font-p-small;
+  line-height: $font-p-small * 1.2;
+
+  @media screen and (min-width: $tablet) {
+    padding: 0.6rem 0.8rem;
+    font-size: $font-p-large;
+    line-height: $font-p-large * 1.2;
+  }
+
+  &:hover,
+  &:focus {
+    background-color: $background-tertiary;
+  }
+}
+
+option {
+  border-radius: 0;
+  background-color: $background-primary;
+  padding: 10px;
+  transition: 0.4s;
+
+  &:hover,
+  &:focus {
+    background-color: $background-tertiary;
+  }
+}
+
+textarea {
+  background-color: $background-secondary;
+  color: $text-primary;
+
+  font-size: $font-p-large;
+
+  border-radius: 5px;
+
+  resize: none;
+
+  padding: 1rem;
+  font-family: "Arimo", sans-serif;
+
+  border: 2px solid $background-tertiary;
+
+  font-size: $font-p-large;
+  line-height: $font-p-large * 1.8;
+
+  &:focus {
+    outline: none;
+  }
+
+  @include respond-to(mobile) {
+    font-size: $font-p-small;
+    line-height: $font-p-small * 1.8;
+  }
+}
+
 .underline {
   text-decoration: underline;
 }
