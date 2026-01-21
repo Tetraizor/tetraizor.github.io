@@ -91,8 +91,7 @@ export default {
     text-overflow: clip;
   }
 
-  @media screen and (min-width: $tablet) {
-  }
+  @media screen and (min-width: $tablet) {}
 
   font-size: 3.5rem;
   margin-bottom: 2rem;
@@ -106,8 +105,7 @@ export default {
     line-height: 1.8rem;
   }
 
-  @media screen and (min-width: $tablet) {
-  }
+  @media screen and (min-width: $tablet) {}
 
   font-size: 2rem;
   margin-bottom: 2rem;

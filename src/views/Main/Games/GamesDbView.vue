@@ -9,7 +9,52 @@
           style="margin: 1rem 0;"
         ></div>
 
-        <p>all games i played/am planning to play.</p>
+        <p style="margin-bottom: 2rem;">all games i played/am planning to play.</p>
+
+        <SectionContainer
+          class="filterContainer"
+          label="Filter"
+        >
+          <div style="display: flex; flex-direction: row; gap: 1rem; flex-wrap: wrap;">
+            <SearchBar
+              style="min-width: 200px; flex-grow: 1;"
+              v-model="searchText"
+            ></SearchBar>
+            <div style="display: flex; gap: 1rem;">
+              <Select
+                v-model="stateFilter"
+                :options="stateFilterOptions"
+                @change="() => { fetchGameListings(); }"
+              />
+              <Select
+                v-model="sortBy"
+                :options="sortByOptions"
+                @change="() => { fetchGameListings(); }"
+              />
+            </div>
+          </div>
+        </SectionContainer>
+
+        <SectionContainer :label="'Tags ' + (selectedTagIds.length > 0 ? `(${selectedTagIds.length})` : '')">
+          <div class="tagContainer">
+            <template v-for="tag in tags">
+              <span
+                class="tag"
+                :class="{ selected: selectedTagIds.includes(tag.tag_id) }"
+                @click.prevent="() => {
+                  if (selectedTagIds.includes(tag.tag_id)) {
+                    const tagIndex = selectedTagIds.indexOf(tag.tag_id);
+                    selectedTagIds.splice(tagIndex, 1);
+                  } else {
+                    selectedTagIds.push(tag.tag_id);
+                  }
+
+                  fetchGameListings();
+                }"
+              >{{ tag.label }}</span>
+            </template>
+          </div>
+        </SectionContainer>
       </div>
 
       <div class="divider "></div>
@@ -94,17 +139,27 @@
 
 <script setup lang="ts">
 import { GameLogType, GameState, GameTagType } from 'portfolio-types';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
+
 import API_CONFIG from '@/config/apiConfig';
 import axios from 'axios';
+
 import RadialProgress from '@/components/RadialProgress.vue';
 import { interpolateColor } from '@/utils/colorUtils';
 import { useScreenStore } from '@/stores/screenStore';
-import { parseGameState } from 'portfolio-types';
+import SearchBar from '@/components/SearchBar.vue';
+import Select from '@/components/Select.vue';
+import Button from '@/components/Button.vue';
+import SectionContainer from '@/components/SectionContainer.vue';
 
 const gameListings = ref<GameLogType[]>([]);
 const tags = ref<GameTagType[]>([]);
+const selectedTagIds = ref<string[]>([]);
 const loading = ref<number>(0);
+
+const searchText = ref<string>("");
+const stateFilter = ref<string>("all");
+const sortBy = ref<string>("overall_score_desc");
 
 const gameStateToLabel = (state: GameState): string => {
   switch (state) {
@@ -124,10 +179,47 @@ const gameStateToLabel = (state: GameState): string => {
   }
 }
 
+const stateFilterOptions = [
+  { label: "All", value: "all" },
+  { label: "Backlog", value: GameState[GameState.backlog] },
+  { label: "Playing", value: GameState[GameState.playing] },
+  { label: "Completed", value: GameState[GameState.completed] },
+  { label: "Dropped", value: GameState[GameState.dropped] },
+  { label: "Perfected", value: GameState[GameState.perfected] },
+  { label: "Endless", value: GameState[GameState.endless] },
+];
+
+const sortByOptions = [
+  { label: "Title (A-Z)", value: "title_asc" },
+  { label: "Title (Z-A)", value: "title_desc" },
+  { label: "Overall Score (High to Low)", value: "overall_score_desc" },
+  { label: "Overall Score (Low to High)", value: "overall_score_asc" },
+];
+
 const fetchGameListings = async () => {
   loading.value++;
 
-  axios.get(API_CONFIG.GAMES.GET_GAME_LISTINGS)
+  const query = new URLSearchParams();
+  if (stateFilter.value !== "all") {
+    query.append("state", stateFilter.value);
+  }
+
+  if (selectedTagIds.value.length > 0) {
+    const tagNames = tags.value
+      .filter(tag => selectedTagIds.value.includes(tag.tag_id))
+      .map(tag => tag.label);
+
+    query.append("tags", tagNames.join(","));
+  }
+
+  if (searchText.value.trim() !== "") {
+    query.append("search", searchText.value.trim());
+  }
+
+  query.append("sort_by", sortBy.value);
+
+  axios.get(API_CONFIG.GAMES.GET_GAME_LISTINGS + `?${query.toString()}`
+  )
     .then(async (res) => {
       gameListings.value = res.data.game_logs;
     })
@@ -172,6 +264,15 @@ const tagsAsText = (tagIds: string[]) => computed(() => {
   return "-";
 });
 
+let debounceTimeout: ReturnType<typeof setTimeout>;
+watch(searchText, () => {
+  clearTimeout(debounceTimeout);
+
+  debounceTimeout = setTimeout(() => {
+    fetchGameListings();
+  }, 300);
+});
+
 onMounted(() => {
   fetchGameListings();
   fetchTags();
@@ -205,11 +306,21 @@ onMounted(() => {
 
     .header {
       padding: 3rem 3rem 2rem 3rem;
-      background-color: $background-secondary;
+      background-color: $background-secondary-semi-transparent;
 
       @include respond-to("mobile") {
         padding: 4rem 1.5rem 1.5rem 1.5rem;
         background-color: transparent;
+      }
+
+      h1 {
+        font-size: calc($font-h1-large * 1.2);
+        line-height: calc($font-h1-large * 1.4);
+
+        @include respond-to("mobile") {
+          font-size: calc($font-h1-small * 1.2);
+          line-height: calc($font-h1-small * 1.4);
+        }
       }
     }
 
@@ -396,6 +507,30 @@ onMounted(() => {
 
     &.accent {
       background-color: $accent;
+    }
+  }
+}
+
+.tagContainer {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: .5rem;
+
+  .tag {
+    padding: .4rem 1.2rem;
+    background-color: $background-secondary-transparent;
+    border-radius: 2rem;
+
+    color: $text-primary;
+
+    outline: 2px solid $outline;
+
+    cursor: pointer;
+
+    &.selected {
+      color: $text-primary;
+      background-color: $button-primary-transparent-hover;
     }
   }
 }
