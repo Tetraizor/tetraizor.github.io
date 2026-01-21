@@ -24,12 +24,12 @@
               <Select
                 v-model="stateFilter"
                 :options="stateFilterOptions"
-                @change="() => { fetchGameListings(); }"
+                @change="() => { fetchGameListings(true); }"
               />
               <Select
                 v-model="sortBy"
                 :options="sortByOptions"
-                @change="() => { fetchGameListings(); }"
+                @change="() => { fetchGameListings(true); }"
               />
             </div>
           </div>
@@ -49,7 +49,7 @@
                     selectedTagIds.push(tag.tag_id);
                   }
 
-                  fetchGameListings();
+                  fetchGameListings(true);
                 }"
               >{{ tag.label }}</span>
             </template>
@@ -131,6 +131,17 @@
               </div>
             </div>
           </template>
+
+          <div
+            ref="bottomSentinel"
+            style="height: 20px; width: 100%;"
+          ></div>
+
+          <div
+            v-if="loading > 0 && gameListings.length > 0"
+            style="text-align: center; padding: 1rem; color: white;"
+          >
+            Loading...</div>
         </div>
       </div>
     </div>
@@ -160,6 +171,11 @@ const loading = ref<number>(0);
 const searchText = ref<string>("");
 const stateFilter = ref<string>("all");
 const sortBy = ref<string>("overall_score_desc");
+
+const page = ref<number>(1);
+const pageSize = 10;
+const hasMore = ref<boolean>(true);
+const bottomSentinel = ref<HTMLElement | null>(null);
 
 const gameStateToLabel = (state: GameState): string => {
   switch (state) {
@@ -196,14 +212,19 @@ const sortByOptions = [
   { label: "Overall Score (Low to High)", value: "overall_score_asc" },
 ];
 
-const fetchGameListings = async () => {
+const fetchGameListings = async (reset: boolean = false) => {
+  if (loading.value > 0 || (!hasMore.value && !reset)) return;
+
   loading.value++;
 
-  const query = new URLSearchParams();
-  if (stateFilter.value !== "all") {
-    query.append("state", stateFilter.value);
+  if (reset) {
+    page.value = 1;
+    hasMore.value = true;
   }
 
+  const query = new URLSearchParams();
+
+  if (stateFilter.value !== "all") query.append("state", stateFilter.value);
   if (selectedTagIds.value.length > 0) {
     const tagNames = tags.value
       .filter(tag => selectedTagIds.value.includes(tag.tag_id))
@@ -217,11 +238,25 @@ const fetchGameListings = async () => {
   }
 
   query.append("sort_by", sortBy.value);
+  query.append("page", page.value.toString());
+  query.append("page_size", pageSize.toString());
 
   axios.get(API_CONFIG.GAMES.GET_GAME_LISTINGS + `?${query.toString()}`
   )
     .then(async (res) => {
-      gameListings.value = res.data.game_logs;
+      const newGames = res.data.game_logs;
+      const serverHasMore = res.data.hasMore === "true";
+
+      if (reset) {
+        gameListings.value = newGames;
+      } else {
+        gameListings.value = gameListings.value.concat(newGames);
+      }
+
+      hasMore.value = serverHasMore;
+      if (serverHasMore) {
+        page.value++;
+      }
     })
     .catch((err) => {
       console.error(err)
@@ -269,13 +304,29 @@ watch(searchText, () => {
   clearTimeout(debounceTimeout);
 
   debounceTimeout = setTimeout(() => {
-    fetchGameListings();
+    fetchGameListings(true);
   }, 300);
 });
+
+let observer: IntersectionObserver;
 
 onMounted(() => {
   fetchGameListings();
   fetchTags();
+
+  observer = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && hasMore.value && loading.value === 0) {
+      fetchGameListings(false);
+    }
+  }, {
+    root: null,
+    rootMargin: '100px',
+    threshold: 0.1
+  })
+
+  if (bottomSentinel.value) {
+    observer.observe(bottomSentinel.value);
+  }
 });
 </script>
 
