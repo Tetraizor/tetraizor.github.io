@@ -48,7 +48,6 @@
                   } else {
                     selectedTagIds.push(tag.tag_id);
                   }
-
                   fetchGameListings(true);
                 }"
               >{{ tag.label }}</span>
@@ -78,7 +77,22 @@
                 <p>{{ gameStateToLabel(listing.state) }}</p>
               </div>
               <div class="numberContainer">
-                <h2>{{ id }}</h2>
+                <template v-if="sortBy == 'title_asc' || sortBy == 'title_desc'">
+                  <span class="rankNormal">
+                    <p>{{ listing.overall_rank }} </p><i></i>
+                  </span>
+                </template>
+                <template v-else-if="selectedTagIds.length > 0">
+                  <h2>{{ id + 1 }}</h2>
+                  <span class="rankSmall">
+                    <p>{{ listing.overall_rank }} </p><i></i>
+                  </span>
+                </template>
+                <template v-else>
+                  <span class="rankNormal">
+                    <p>{{ listing.overall_rank }} </p><i></i>
+                  </span>
+                </template>
               </div>
               <div
                 class="thumbnailContainer"
@@ -124,9 +138,10 @@
               </div>
               <div class="overallScoreContainer">
                 <RadialProgress
-                  :value="listing.overall_score"
+                  :fillAmount="listing.overall_score"
                   :color="'#' + interpolateColor('DD4747', '8ADE8F', (listing.overall_score / 100))"
-                  :trackColor="'#' + interpolateColor('4d1919', '3b592b', (listing.overall_score / 100))"
+                  :trackColor="'#' + (listing.overall_score >= 0 ? interpolateColor('4d1919', '3b592b', (listing.overall_score / 100)) : '3d3d3d')"
+                  :text="listing.overall_score >= 0 ? listing.overall_score.toString() : '-'"
                 />
               </div>
             </div>
@@ -345,15 +360,15 @@ onMounted(() => {
     flex-direction: column;
 
     height: 100%;
-
     width: 100%;
+
     max-width: min(70%, 1024px);
+
+    overflow-y: auto;
 
     @include respond-to("mobile") {
       max-width: 100%;
     }
-
-    overflow: hidden;
 
     .header {
       padding: 3rem 3rem 2rem 3rem;
@@ -376,9 +391,9 @@ onMounted(() => {
     }
 
     .listWrapper {
-      flex: 1;
+      user-select: none;
 
-      overflow-y: auto;
+      flex: 1;
 
       background-color: $background-primary;
 
@@ -446,13 +461,71 @@ onMounted(() => {
           align-items: center;
           justify-content: center;
 
+          flex-direction: column;
+
           width: 5rem;
+          gap: .4rem;
 
           @include respond-to("mobile") {
             width: 2rem;
+            gap: .2rem;
           }
 
           flex-shrink: 0;
+
+          .rankNormal,
+          .rankSmall {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            i {
+              display: inline-block;
+
+              background-image: url("@/assets/icons/crown.svg");
+              background-size: contain;
+              background-repeat: no-repeat;
+              background-position: center;
+
+              pointer-events: none;
+            }
+          }
+
+          .rankNormal {
+            gap: .2rem;
+
+            i {
+              width: 1rem;
+              height: 1rem;
+
+              @media screen and (min-width: $tablet) {
+                width: 1.1rem;
+                height: 1.1rem;
+              }
+            }
+          }
+
+          .rankSmall {
+
+            gap: .15rem;
+            opacity: .5;
+
+            font-size: calc($font-p-large * .7);
+
+            @include respond-to("mobile") {
+              font-size: calc($font-p-small * .7);
+            }
+
+            i {
+              width: 1rem;
+              height: 1rem;
+
+              @media screen and (min-width: $tablet) {
+                width: 1.1rem;
+                height: 1.1rem;
+              }
+            }
+          }
         }
 
         .thumbnailContainer {

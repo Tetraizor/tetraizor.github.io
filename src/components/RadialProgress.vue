@@ -34,7 +34,7 @@
       />
     </svg>
     <div class="progressLabel">
-      <p>{{ clampedValue }}</p>
+      <p>{{ text }}</p>
     </div>
   </div>
 </template>
@@ -43,14 +43,15 @@
 import { computed, defineProps } from 'vue';
 
 const props = defineProps<{
-  value: number;
+  fillAmount: number;
   strokeWidth?: number;
   color?: string;
   trackColor?: string;
+  text?: string;
 }>();
 
 const clampedValue = computed(() => {
-  const v = Number(props.value);
+  const v = Number(props.fillAmount);
   if (isNaN(v)) return 0;
   return Math.min(100, Math.max(0, v));
 });
