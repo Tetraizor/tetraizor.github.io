@@ -21,37 +21,33 @@
               v-model="searchText"
             ></SearchBar>
             <div style="display: flex; gap: 1rem;">
-              <Select
-                v-model="stateFilter"
-                :options="stateFilterOptions"
-                @change="() => { fetchGameListings(true); }"
-              />
-              <Select
-                v-model="sortBy"
-                :options="sortByOptions"
-                @change="() => { fetchGameListings(true); }"
-              />
-            </div>
-          </div>
-        </SectionContainer>
+              <span>
+                <p style="margin-bottom: 0.5rem;">Progress</p>
+                <Select
+                  v-model="stateFilter"
+                  :options="stateFilterOptions"
+                  @change="() => { fetchGameListings(true); }"
+                />
+              </span>
 
-        <SectionContainer :label="'Tags ' + (selectedTagIds.length > 0 ? `(${selectedTagIds.length})` : '')">
-          <div class="tagContainer">
-            <template v-for="tag in tags">
-              <span
-                class="tag"
-                :class="{ selected: selectedTagIds.includes(tag.tag_id) }"
-                @click.prevent="() => {
-                  if (selectedTagIds.includes(tag.tag_id)) {
-                    const tagIndex = selectedTagIds.indexOf(tag.tag_id);
-                    selectedTagIds.splice(tagIndex, 1);
-                  } else {
-                    selectedTagIds.push(tag.tag_id);
-                  }
-                  fetchGameListings(true);
-                }"
-              >{{ tag.label }}</span>
-            </template>
+              <span>
+                <p style="margin-bottom: 0.5rem;">Sort By</p>
+                <Select
+                  v-model="sortBy"
+                  :options="sortByOptions"
+                  @change="() => { fetchGameListings(true); }"
+                />
+              </span>
+
+              <span>
+                <p style="margin-bottom: 0.5rem;">Tags</p>
+                <Select
+                  v-model="selectedTag"
+                  :options="tagOptions"
+                  @change="() => { fetchGameListings(true); }"
+                />
+              </span>
+            </div>
           </div>
         </SectionContainer>
       </div>
@@ -77,12 +73,12 @@
                 <p>{{ gameStateToLabel(listing.state) }}</p>
               </div>
               <div class="numberContainer">
-                <template v-if="sortBy == 'title_asc' || sortBy == 'title_desc'">
+                <template v-if="sortBy == 'title_asc' || sortBy == 'title_desc' || searchText.trim() !== ''">
                   <span class="rankNormal">
                     <p>{{ listing.overall_rank }} </p><i></i>
                   </span>
                 </template>
-                <template v-else-if="selectedTagIds.length > 0">
+                <template v-else-if="(selectedTag !== '' && selectedTag !== 'all') || (stateFilter !== 'all')">
                   <h2>{{ id + 1 }}</h2>
                   <span class="rankSmall">
                     <p>{{ listing.overall_rank }} </p><i></i>
@@ -180,12 +176,13 @@ import SectionContainer from '@/components/SectionContainer.vue';
 
 const gameListings = ref<GameLogType[]>([]);
 const tags = ref<GameTagType[]>([]);
-const selectedTagIds = ref<string[]>([]);
+
 const loading = ref<number>(0);
 
 const searchText = ref<string>("");
 const stateFilter = ref<string>("all");
 const sortBy = ref<string>("overall_score_desc");
+const selectedTag = ref<string>("all");
 
 const page = ref<number>(1);
 const pageSize = 10;
@@ -240,13 +237,7 @@ const fetchGameListings = async (reset: boolean = false) => {
   const query = new URLSearchParams();
 
   if (stateFilter.value !== "all") query.append("state", stateFilter.value);
-  if (selectedTagIds.value.length > 0) {
-    const tagNames = tags.value
-      .filter(tag => selectedTagIds.value.includes(tag.tag_id))
-      .map(tag => tag.label);
-
-    query.append("tags", tagNames.join(","));
-  }
+  if (selectedTag.value !== "" && selectedTag.value !== "all") query.append("tag_id", selectedTag.value);
 
   if (searchText.value.trim() !== "") {
     query.append("search", searchText.value.trim());
@@ -312,6 +303,17 @@ const tagsAsText = (tagIds: string[]) => computed(() => {
   }
 
   return "-";
+});
+
+const tagOptions = computed(() => {
+  const options = [{ label: "All", value: "all" }];
+  if (tags.value != undefined) {
+    tags.value.forEach(tag => {
+      options.push({ label: tag.label, value: tag.tag_id });
+    });
+  }
+
+  return options;
 });
 
 let debounceTimeout: ReturnType<typeof setTimeout>;
