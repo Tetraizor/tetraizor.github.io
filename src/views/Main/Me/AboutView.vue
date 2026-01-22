@@ -432,6 +432,10 @@ export default {
         background-color: $accent;
         color: $text-primary;
       }
+
+      i {
+        color: inherit !important;
+      }
     }
   }
 

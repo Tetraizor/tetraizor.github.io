@@ -12,7 +12,7 @@ import ConstructionView from "./views/ConstructionView.vue";
 
 // "MainView" Children
 import MeView from "./views/Main/MeView.vue";
-import BlogView from "./views/Main/BlogView.vue";
+import BlogInactiveView from "./views/Main/BlogInactiveView.vue";
 import ProjectsView from "./views/Main/ProjectsView.vue";
 import GamesView from "./views/Main/GamesView.vue";
 
@@ -60,7 +60,7 @@ const defaultRoutes = [
       {
         path: "/blog",
         name: "blog",
-        component: BlogView,
+        component: BlogInactiveView,
         children: [
           {
             path: "",

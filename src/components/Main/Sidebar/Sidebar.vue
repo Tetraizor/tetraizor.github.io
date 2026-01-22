@@ -26,13 +26,17 @@
             :selectedIndex="selectedIndex"
             @sidebarButtonPressed="() => sidebarButtonPressed('me')"
           />
+
+          <!--
           <PageButton
-            title="blog."
-            description="my thoughts, lined up."
-            :pageData="getPageByName('blog')"
-            :selectedIndex="selectedIndex"
-            @sidebarButtonPressed="() => sidebarButtonPressed('blog')"
+          title="blog."
+          description="my thoughts, lined up."
+          :pageData="getPageByName('blog')"
+          :selectedIndex="selectedIndex"
+          @sidebarButtonPressed="() => sidebarButtonPressed('blog')"
           />
+          -->
+
           <PageButton
             title="games."
             description="my takes on video games, compiled into a list"
