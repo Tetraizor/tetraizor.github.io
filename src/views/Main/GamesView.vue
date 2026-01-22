@@ -1,27 +1,15 @@
 <template>
   <div class="gamesViewWrapper">
     <div class="blurField">
-      <div class="textWrapper">
-        <h1 class="title">sorry :(</h1>
-        <h2 class="description">
-          games page is currently under development.
-          <span
-            @click.prevent="navigationPage.changePageByName('present')"
-            style="cursor: pointer; white-space: nowrap"
-            class="underline"
-            >go back
-            <i
-              class="fa-sharp fa-solid fa-xs fa-arrow-up-right-from-square"
-            ></i>
-          </span>
-        </h2>
-      </div>
+      <router-view v-slot="{ Component }">
+      </router-view>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { useNavigationStore } from "@/stores/navigationStore";
+import PageViewer from "./PageViewer.vue";
 
 export default {
   name: "GamesView",
@@ -61,6 +49,8 @@ export default {
 
   animation: slide 100s linear infinite;
 
+  overflow: hidden;
+
   @keyframes slide {
     0% {
       background-position: 0 0;
@@ -81,49 +71,5 @@ export default {
     width: 100%;
     height: 100%;
   }
-}
-
-.textWrapper {
-  @media screen and (max-width: $tablet) {
-    padding: 128px 10%;
-  }
-
-  @media screen and (min-width: $tablet) {
-    padding: 256px 15%;
-  }
-}
-
-.title {
-  @media screen and (max-width: $tablet) {
-    font-size: 1.8rem;
-    margin-bottom: 2rem;
-    line-height: 2rem;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: clip;
-  }
-
-  @media screen and (min-width: $tablet) {
-  }
-
-  font-size: 3.5rem;
-  margin-bottom: 2rem;
-  line-height: 5rem;
-}
-
-.description {
-  @media screen and (max-width: $tablet) {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-    line-height: 1.8rem;
-  }
-
-  @media screen and (min-width: $tablet) {
-  }
-
-  font-size: 2rem;
-  margin-bottom: 2rem;
-  line-height: 3rem;
 }
 </style>

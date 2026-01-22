@@ -35,7 +35,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "/styles/_defaults.scss";
+@use "/styles/_defaults.scss" as *;
 
 .md-body {
   font-family: sans-serif !important;

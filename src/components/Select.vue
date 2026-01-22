@@ -1,50 +1,53 @@
 <template>
-  <div class="searchBar">
-    <input
-      :placeholder="placeholder"
+  <div class="selectWrapper">
+    <select
       :value="modelValue"
-      @input="onInput"
-    />
+      @change="onChange($event)"
+    >
+      <option
+        v-for="(option, index) in options"
+        :key="index"
+        :value="option.value"
+      >
+        {{ option.label }}
+      </option>
+    </select>
+
     <i class="icon"></i>
   </div>
 </template>
 
 <script lang="ts">
 export default {
-  name: "SearchBar",
+  name: "Select",
   props: {
-    placeholder: {
-      type: String,
-      default: "Search",
+    options: {
+      type: Array as () => Array<{ label: string; value: string }>,
+      required: true,
     },
     modelValue: {
       type: String,
       default: "",
     },
   },
-  components: {},
   emits: ["update:modelValue"],
 
-  data() {
-    return {};
-  },
-
   methods: {
-    onInput(event: Event) {
-      this.$emit("update:modelValue", (event.target as HTMLInputElement).value);
+    onChange(event: Event) {
+      this.$emit("update:modelValue", (event.target as HTMLSelectElement).value);
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>
-.searchBar {
+.selectWrapper {
   position: relative;
-  border-bottom: 3px solid $accent;
 
-  input {
-    height: 100%;
+  select {
+    padding-right: 3rem;
     width: 100%;
+    height: 100%;
   }
 }
 
@@ -65,7 +68,7 @@ export default {
     height: 1.1rem;
   }
 
-  background-image: url("@/assets/icons/search.svg");
+  background-image: url("@/assets/icons/down_arrow.svg");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;

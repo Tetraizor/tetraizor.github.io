@@ -5,7 +5,10 @@
       :class="{ on: sidebarStore.isOpen }"
       @click.prevent="onEmptySpaceClicked()"
     ></div>
-    <div class="sidebar" :class="{ collapse: !sidebarStore.isOpen }">
+    <div
+      class="sidebar"
+      :class="{ collapse: !sidebarStore.isOpen }"
+    >
       <div
         class="sidebarToggle"
         :class="{ collapse: !sidebarStore.isOpen }"
@@ -35,7 +38,6 @@
             description="my takes on video games, compiled into a list"
             :pageData="getPageByName('games')"
             :selectedIndex="selectedIndex"
-            :disabled="true"
             @sidebarButtonPressed="() => sidebarButtonPressed('games')"
           />
           <PageButton

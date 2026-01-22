@@ -11,5 +11,9 @@ const API_CONFIG = {
   FEATURED: {
     GET_ALL: `${BASE_URL}/featured/getAllFeaturedItems`,
   },
+  GAMES: {
+    GET_GAME_LISTINGS: `${BASE_URL}/gameLog/getGameLogs`,
+    GET_TAGS: `${BASE_URL}/gameLog/getTags`,
+  },
 };
 export default API_CONFIG;

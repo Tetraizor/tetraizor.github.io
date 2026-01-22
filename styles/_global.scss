@@ -1,5 +1,4 @@
-@import './_variables.scss';
-@import './_mixins.scss';
+@use "./_mixins.scss" as *;
 
 $font-h1-large: 2rem;
 $font-h1-small: 1.6rem;
