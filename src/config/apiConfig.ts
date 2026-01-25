@@ -14,6 +14,7 @@ const API_CONFIG = {
   GAMES: {
     GET_GAME_LISTINGS: `${BASE_URL}/gameLog/getGameLogs`,
     GET_TAGS: `${BASE_URL}/gameLog/getTags`,
+    GET_SCORE_CATEGORIES: `${BASE_URL}/gameLog/getScoreCategories`,
   },
 };
 export default API_CONFIG;

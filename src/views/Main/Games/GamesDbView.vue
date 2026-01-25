@@ -110,24 +110,23 @@
                     v-if="!useScreenStore().isMobile"
                     class="scoreContainers"
                   >
-                    <div style="display: flex; align-items: center; flex-direction: column;">
-                      <p style="opacity: .5;">OST</p>
-                      <p>{{ listing.ost_score > 0 ? listing.ost_score : '-' }}</p>
-                    </div>
+                    <template
+                      v-for="(score, index) in listing.scores.sort((a, b) => b.value - a.value).slice(0, 4)"
+                      :key="index"
+                    >
+                      <div style="display: flex; align-items: center; flex-direction: column;">
+                        <p style="opacity: .5;">{{
+                          categories
+                            .find(c => c.score_category_id === score.score_category_id)?.name
+                        }}</p>
+                        <p>{{ score.value > 0 ? score.value : '-' }}</p>
+                      </div>
 
-                    <div style="height: 60%; width: 1px; background-color: white; margin: 0 1rem; opacity: .5;" />
-
-                    <div style="display: flex; align-items: center; flex-direction: column;">
-                      <p style="opacity: .5;">Gameplay</p>
-                      <p>{{ listing.gameplay_score > 0 ? listing.gameplay_score : '-' }}</p>
-                    </div>
-
-                    <div style="height: 60%; width: 1px; background-color: white; margin: 0 1rem; opacity: .5;" />
-
-                    <div style="display: flex; align-items: center; flex-direction: column;">
-                      <p style="opacity: .5;">Story</p>
-                      <p>{{ listing.story_score > 0 ? listing.story_score : '-' }}</p>
-                    </div>
+                      <div
+                        v-if="index != listing.scores.length - 1"
+                        style="height: 60%; width: 1px; background-color: white; margin: 0 1rem; opacity: .5;"
+                      />
+                    </template>
                   </div>
                 </div>
                 <p class="description">{{ listing.description }}</p>
@@ -160,7 +159,7 @@
 </template>
 
 <script setup lang="ts">
-import { GameLogType, GameState, GameTagType } from 'portfolio-types';
+import { GameLogType, GameState, GameTagType, GameScore, ScoreCategory } from 'portfolio-types';
 import { computed, onMounted, ref, watch } from 'vue';
 
 import API_CONFIG from '@/config/apiConfig';
@@ -176,6 +175,7 @@ import SectionContainer from '@/components/SectionContainer.vue';
 
 const gameListings = ref<GameLogType[]>([]);
 const tags = ref<GameTagType[]>([]);
+const categories = ref<ScoreCategory[]>([]);
 
 const loading = ref<number>(0);
 
@@ -278,7 +278,6 @@ const fetchTags = async () => {
   axios.get(API_CONFIG.GAMES.GET_TAGS)
     .then(async (res) => {
       tags.value = res.data.tags;
-      console.log(tags.value);
     })
     .catch((err) => {
       console.error(err)
@@ -287,6 +286,21 @@ const fetchTags = async () => {
       loading.value--;
     });
 };
+
+const fetchCategories = async () => {
+  loading.value++;
+
+  axios.get(API_CONFIG.GAMES.GET_SCORE_CATEGORIES)
+    .then(async (res) => {
+      categories.value = res.data.score_categories;
+    })
+    .catch((err) => {
+      console.error(err)
+    })
+    .finally(() => {
+      loading.value--;
+    });
+}
 
 const tagsAsText = (tagIds: string[]) => computed(() => {
   const tagLabels: string[] = [];
@@ -330,6 +344,7 @@ let observer: IntersectionObserver;
 onMounted(() => {
   fetchGameListings();
   fetchTags();
+  fetchCategories();
 
   observer = new IntersectionObserver((entries) => {
     if (entries[0].isIntersecting && hasMore.value && loading.value === 0) {
