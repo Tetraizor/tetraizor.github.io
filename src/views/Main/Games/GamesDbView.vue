@@ -237,7 +237,7 @@ const fetchGameListings = async (reset: boolean = false) => {
   const query = new URLSearchParams();
 
   if (stateFilter.value !== "all") query.append("state", stateFilter.value);
-  if (selectedTag.value !== "" && selectedTag.value !== "all") query.append("tag_id", selectedTag.value);
+  if (selectedTag.value !== "" && selectedTag.value !== "all") query.append("tags", selectedTag.value);
 
   if (searchText.value.trim() !== "") {
     query.append("search", searchText.value.trim());
