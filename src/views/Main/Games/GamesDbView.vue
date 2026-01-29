@@ -67,10 +67,20 @@
                   backgroundImage: `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,1)), url(${listing.thumbnail_url})`
                 }"
               >
-
               </div>
-              <div class="stateContainer">
-                <p>{{ gameStateToLabel(listing.state) }}</p>
+              <div
+                class="stateContainer"
+                :style="{
+                  backgroundColor: gameStateToColor(listing.state).background,
+                }"
+                style="overflow: hidden;"
+              >
+                <p
+                  style="font-weight: bold;"
+                  :style="{ color: `${gameStateToColor(listing.state).text}` }
+                    "
+                >{{ gameStateToLabel(listing.state) }}
+                </p>
               </div>
               <div class="numberContainer">
                 <template v-if="sortBy == 'title_asc' || sortBy == 'title_desc' || searchText.trim() !== ''">
@@ -189,6 +199,33 @@ const pageSize = 10;
 const hasMore = ref<boolean>(true);
 const bottomSentinel = ref<HTMLElement | null>(null);
 
+const gameStateToColor = (state: GameState): { background: string, text: string } => {
+  console.log(state);
+
+  switch (state) {
+    case GameState.perfected:
+      return { background: "#784278", text: "#cf7ecf" };
+
+    case GameState.completed:
+      return { background: "#4da06b", text: "#cbf7db" };
+
+    case GameState.playing:
+      return { background: "#63cbf8", text: "#33515d" };
+
+    case GameState.backlog:
+      return { background: "#343434", text: "#a1a1a1" };
+
+    case GameState.dropped:
+      return { background: "#F87171", text: "#463333" };
+
+    case GameState.endless:
+      return { background: "#d7d8a1", text: "#595a4c" };
+
+    default:
+      return { background: "#474747", text: "#FFFFFF" };
+  }
+}
+
 const gameStateToLabel = (state: GameState): string => {
   switch (state) {
     case GameState.completed:
@@ -237,7 +274,7 @@ const fetchGameListings = async (reset: boolean = false) => {
   const query = new URLSearchParams();
 
   if (stateFilter.value !== "all") query.append("state", stateFilter.value);
-  if (selectedTag.value !== "" && selectedTag.value !== "all") query.append("tag_id", selectedTag.value);
+  if (selectedTag.value !== "" && selectedTag.value !== "all") query.append("tags", selectedTag.value);
 
   if (searchText.value.trim() !== "") {
     query.append("search", searchText.value.trim());
