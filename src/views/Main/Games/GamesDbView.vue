@@ -200,8 +200,6 @@ const hasMore = ref<boolean>(true);
 const bottomSentinel = ref<HTMLElement | null>(null);
 
 const gameStateToColor = (state: GameState): { background: string, text: string } => {
-  console.log(state);
-
   switch (state) {
     case GameState.perfected:
       return { background: "#784278", text: "#cf7ecf" };
